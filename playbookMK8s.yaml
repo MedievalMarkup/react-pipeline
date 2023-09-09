@@ -1,0 +1,25 @@
+- hosts: localhost
+
+  tasks:
+
+    - name: Deploy the service
+      ansible.builtin.shell: 
+        cmd: kubectl apply -f svc.yaml 
+      register: update_output
+
+    - name: update output
+      ansible.builtin.debug:
+        var: update_output.stdout_lines
+
+    - name: substitute the image
+      ansible.builtin.shell: |
+        sed 's|image_id|{{ image_id }}|' deployment.yaml | tee deployment_modified.yaml && mv deployment_modified.yaml deployment.yaml
+        kubectl apply -f deployment.yaml
+      register: update_output
+
+    - name: update output
+      ansible.builtin.debug:
+        var: update_output.stdout_lines
+      
+
+    

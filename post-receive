@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if ! [ -t 0 ]; then
+        read -a ref
+fi
+
+echo "running"
+
+IFS='/' read -ra REF <<< "${ref[2]}"
+branch="${REF[2]}"
+
+if [ $branch == "main" ]; then
+        curl -v -X POST http://my-jenkins-cicd:8080/job/react-pipeline/build?delay=0sec --user adiln22:$JENKINS_API_TOKEN
+
+        if [ $? -eq 0 ]; then
+                echo "*** Ok"
+        else
+                echo "*** Error"
+        fi
+
+fi
+
